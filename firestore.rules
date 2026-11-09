@@ -1,0 +1,111 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default deny all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isCurrentUser(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        (request.auth.token.email == "06zta06@gmail.com") ||
+        (request.auth.token.email == "admin@tedarik360.local") ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && getUserData().role == 'ADMIN')
+      );
+    }
+
+    function isOperator() {
+      return isSignedIn() && exists(/databases/$(database)/documents/users/$(request.auth.uid)) && (
+        getUserData().role == 'OPERATOR' || getUserData().role == 'ADMIN'
+      );
+    }
+
+    function isSupplierUser(supplierId) {
+      return isSignedIn() && exists(/databases/$(database)/documents/users/$(request.auth.uid)) && (
+        getUserData().role == 'SUPPLIER' && getUserData().supplierId == supplierId
+      );
+    }
+
+    // Users Collection
+    match /users/{userId} {
+      allow read: if true;
+      allow create, update, delete: if true;
+    }
+
+    // Suppliers Collection
+    match /suppliers/{supplierId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // Facilities Collection (Master Database)
+    match /facilities/{facilityId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // Vehicle Requests
+    match /vehicleRequests/{requestId} {
+      allow read: if true;
+      allow create, update, delete: if true;
+    }
+
+    // Request Assignments
+    match /requestAssignments/{assignmentId} {
+      allow read: if true;
+      allow create, update, delete: if true;
+    }
+
+    // Supplier Request Views (Privacy Isolation)
+    match /supplierRequestViews/{viewId} {
+      allow read: if true;
+      allow create, update, delete: if true;
+    }
+
+    // Vehicles
+    match /vehicles/{vehicleId} {
+      allow read: if true;
+      allow create, update, delete: if true;
+    }
+
+    // Vehicle Events
+    match /vehicleEvents/{eventId} {
+      allow read: if true;
+      allow create, update, delete: if true;
+    }
+
+    // Messages
+    match /messages/{messageId} {
+      allow read: if true;
+      allow create, update, delete: if true;
+    }
+
+    // Notifications
+    match /notifications/{notificationId} {
+      allow read: if true;
+      allow create, update, delete: if true;
+    }
+
+    // Audit Logs
+    match /auditLogs/{logId} {
+      allow read: if true;
+      allow create: if true;
+      allow update, delete: if false;
+    }
+  }
+}

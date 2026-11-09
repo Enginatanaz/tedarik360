@@ -1,0 +1,249 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile with role-based access control (ADMIN, OPERATOR, SUPPLIER)",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128 },
+        "fullName": { "type": "string", "maxLength": 100 },
+        "email": { "type": "string", "maxLength": 150 },
+        "phone": { "type": "string", "maxLength": 30 },
+        "role": { "type": "string", "enum": ["ADMIN", "OPERATOR", "SUPPLIER"] },
+        "supplierId": { "type": "string", "maxLength": 64 },
+        "active": { "type": "boolean" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["uid", "fullName", "email", "role", "active"]
+    },
+    "Supplier": {
+      "title": "Supplier",
+      "description": "Logistics supplier company record",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "companyName": { "type": "string", "maxLength": 100 },
+        "contactPerson": { "type": "string", "maxLength": 100 },
+        "phone": { "type": "string", "maxLength": 30 },
+        "email": { "type": "string", "maxLength": 150 },
+        "active": { "type": "boolean" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["companyName", "contactPerson", "phone", "email", "active"]
+    },
+    "Facility": {
+      "title": "Facility",
+      "description": "Logistics hub, plant or warehouse facility",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "facilityName": { "type": "string", "maxLength": 100 },
+        "city": { "type": "string", "maxLength": 60 },
+        "active": { "type": "boolean" }
+      },
+      "required": ["facilityName", "city", "active"]
+    },
+    "VehicleRequest": {
+      "title": "VehicleRequest",
+      "description": "Vehicle procurement demand posted by Admin",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "requestNumber": { "type": "string", "maxLength": 30 },
+        "originFacility": { "type": "string", "maxLength": 100 },
+        "destination": { "type": "string", "maxLength": 100 },
+        "vehicleType": { "type": "string", "maxLength": 50 },
+        "totalQuantity": { "type": "number" },
+        "distributionMode": { "type": "string", "enum": ["MANUAL", "OPEN"] },
+        "requiredDate": { "type": "string", "maxLength": 30 },
+        "requiredTime": { "type": "string", "maxLength": 20 },
+        "description": { "type": "string", "maxLength": 500 },
+        "status": { "type": "string", "enum": ["DRAFT", "PENDING", "PARTIALLY_FULFILLED", "FULFILLED", "CANCELLED"] },
+        "createdBy": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["requestNumber", "originFacility", "destination", "vehicleType", "totalQuantity", "distributionMode", "requiredDate", "status"]
+    },
+    "RequestAssignment": {
+      "title": "RequestAssignment",
+      "description": "Supplier assignment record for a specific request",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "requestId": { "type": "string", "maxLength": 64 },
+        "supplierId": { "type": "string", "maxLength": 64 },
+        "assignedQuantity": { "type": "number" },
+        "offeredQuantity": { "type": "number" },
+        "confirmedQuantity": { "type": "number" },
+        "status": { "type": "string", "enum": ["PENDING", "OFFERED", "CONFIRMED", "REJECTED", "COMPLETED"] },
+        "responseNote": { "type": "string", "maxLength": 500 },
+        "sentAt": { "type": "string" },
+        "respondedAt": { "type": "string" }
+      },
+      "required": ["requestId", "supplierId", "assignedQuantity", "offeredQuantity", "confirmedQuantity", "status"]
+    },
+    "Vehicle": {
+      "title": "Vehicle",
+      "description": "Assigned vehicle and driver assigned to a request",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "requestId": { "type": "string", "maxLength": 64 },
+        "assignmentId": { "type": "string", "maxLength": 64 },
+        "supplierId": { "type": "string", "maxLength": 64 },
+        "plate": { "type": "string", "maxLength": 30 },
+        "driverName": { "type": "string", "maxLength": 80 },
+        "driverPhone": { "type": "string", "maxLength": 30 },
+        "vehicleType": { "type": "string", "maxLength": 50 },
+        "originFacility": { "type": "string", "maxLength": 100 },
+        "destination": { "type": "string", "maxLength": 100 },
+        "requiredDate": { "type": "string", "maxLength": 30 },
+        "expectedArrival": { "type": "string", "maxLength": 30 },
+        "actualArrival": { "type": "string", "maxLength": 30 },
+        "status": {
+          "type": "string",
+          "enum": [
+            "SUPPLIER_REPORTED",
+            "REVISION_PENDING",
+            "APPROVED",
+            "REJECTED",
+            "ON_THE_WAY",
+            "ARRIVED",
+            "CANCELLED",
+            "TALEP_GONDERILDI",
+            "YANIT_BEKLENIYOR",
+            "ARAC_BILDIRILDI",
+            "YONETICI_ONAYI",
+            "TEYIT_EDILDI",
+            "YOLDA",
+            "TESISE_GIRIS_YAPTI",
+            "GECIKTI",
+            "ARIZALI",
+            "IPTAL"
+          ]
+        },
+        "description": { "type": "string", "maxLength": 500 },
+        "revisionCount": { "type": "number" },
+        "lastRevisionAt": { "type": "string" },
+        "lastRevisionBy": { "type": "string", "maxLength": 128 },
+        "createdBy": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["requestId", "supplierId", "plate", "driverName", "driverPhone", "status"]
+    },
+    "VehicleEvent": {
+      "title": "VehicleEvent",
+      "description": "Log of status changes, issues, delays, breakdowns or arrivals for vehicles",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "vehicleId": { "type": "string", "maxLength": 64 },
+        "eventType": { "type": "string", "maxLength": 50 },
+        "oldValues": { "type": "object" },
+        "newValues": { "type": "object" },
+        "description": { "type": "string", "maxLength": 500 },
+        "createdBy": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["vehicleId", "eventType", "description", "createdBy"]
+    },
+    "Message": {
+      "title": "Message",
+      "description": "Communication log with driver via WhatsApp or SMS",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "vehicleId": { "type": "string", "maxLength": 64 },
+        "driverPhone": { "type": "string", "maxLength": 30 },
+        "channel": { "type": "string", "enum": ["WHATSAPP", "SMS"] },
+        "direction": { "type": "string", "enum": ["OUTBOUND", "INBOUND"] },
+        "content": { "type": "string", "maxLength": 1000 },
+        "providerMessageId": { "type": "string", "maxLength": 128 },
+        "deliveryStatus": { "type": "string", "enum": ["PENDING", "SENT", "DELIVERED", "READ", "FAILED", "RECEIVED"] },
+        "sentBy": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["driverPhone", "channel", "direction", "content", "deliveryStatus"]
+    },
+    "Notification": {
+      "title": "Notification",
+      "description": "System alerts and operational notifications",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "recipientUid": { "type": "string", "maxLength": 128 },
+        "recipientRole": { "type": "string", "maxLength": 30 },
+        "type": { "type": "string", "maxLength": 50 },
+        "title": { "type": "string", "maxLength": 120 },
+        "body": { "type": "string", "maxLength": 500 },
+        "relatedVehicleId": { "type": "string", "maxLength": 64 },
+        "relatedRequestId": { "type": "string", "maxLength": 64 },
+        "read": { "type": "boolean" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["title", "body", "read"]
+    },
+    "AuditLog": {
+      "title": "AuditLog",
+      "description": "Immutable security and operational audit trail",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "actorUid": { "type": "string", "maxLength": 128 },
+        "actorRole": { "type": "string", "maxLength": 30 },
+        "action": { "type": "string", "maxLength": 80 },
+        "collection": { "type": "string", "maxLength": 50 },
+        "documentId": { "type": "string", "maxLength": 64 },
+        "oldValues": { "type": "object" },
+        "newValues": { "type": "object" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["actorUid", "actorRole", "action", "collection", "documentId"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profile with role-based access control and supplier mapping"
+    },
+    "/suppliers/{supplierId}": {
+      "schema": "Supplier",
+      "description": "Logistics supplier companies: Deniz, Alp Özler, Tekno, Ekol"
+    },
+    "/facilities/{facilityId}": {
+      "schema": "Facility",
+      "description": "Origin and destination logistic centers"
+    },
+    "/vehicleRequests/{requestId}": {
+      "schema": "VehicleRequest",
+      "description": "Vehicle procurement demands"
+    },
+    "/requestAssignments/{assignmentId}": {
+      "schema": "RequestAssignment",
+      "description": "Supplier vehicle quota assignments and offers"
+    },
+    "/vehicles/{vehicleId}": {
+      "schema": "Vehicle",
+      "description": "Assigned vehicles, drivers, tracking states and status updates"
+    },
+    "/vehicleEvents/{eventId}": {
+      "schema": "VehicleEvent",
+      "description": "Event log for vehicle delays, breakdowns, arrivals"
+    },
+    "/messages/{messageId}": {
+      "schema": "Message",
+      "description": "Driver messaging logs via WhatsApp / SMS"
+    },
+    "/notifications/{notificationId}": {
+      "schema": "Notification",
+      "description": "User operational alerts and notification items"
+    },
+    "/auditLogs/{logId}": {
+      "schema": "AuditLog",
+      "description": "Audit logging for changes, assignments and transfers"
+    }
+  }
+}
